@@ -1,6 +1,12 @@
+from request import HTTPRequest, HTTPSRequest
+
+
 __all__ = [
     get,
 ]
 
 def get(url : str, ):
-    pass
+    """
+    Determinar el HOST, PATH y Protocolo
+    """
+    return HTTPSRequest("GET", )
