@@ -1,4 +1,5 @@
 from socket import (
+    gethostbyname,
     socket,
     AF_INET,
     SOCK_STREAM,
@@ -31,7 +32,8 @@ class BasicRequest(object):
         
         self.__headers = value
 
-        self.sock.connect((self.headers["Host"], self.port))
+        ip_addr = gethostbyname(self.headers["Host"])
+        self.sock.connect((ip_addr, self.port))
 
 
     # Construye el request HTTP basico que sera enviado como texto plano

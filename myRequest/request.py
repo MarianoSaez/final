@@ -6,6 +6,7 @@ from socket import (
 from ssl import (
     create_default_context,
 )
+from select import select
 from basic_request import BasicRequest
 
 
@@ -37,12 +38,24 @@ class HTTPSRequest(BasicRequest):
 
         self.sock.send(r.encode())
 
-        while (1):
-            data = self.sock.recv(2048)
-            if len(data) < 1:
-                break
-            print(data.decode(errors='ignore'))
+        rta = b""
 
+        self.sock.settimeout(2.0)   # Esperar hasta 2 segundos por el response
+
+        while (1):
+            try:
+                data = self.sock.recv(4096)
+                rta += data
+
+                if len(data) < 1:
+                    break
+
+            except TimeoutError:
+                break
+
+            
+
+        print(rta)
 
 
 if __name__ == "__main__":
