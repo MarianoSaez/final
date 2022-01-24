@@ -1,4 +1,4 @@
-```html
-<div style="width: 640px; height: 480px; margin: 10px; position: relative;"><iframe allowfullscreen frameborder="0" style="width:640px; height:480px" src="https://lucid.app/documents/embeddedchart/aa266965-b433-4724-ac3c-cb41224695ed" id="ZpYMkeq3reem"></iframe></div>
-
-```
+# Simple Web Scrapper Server
+Simple Web Scrapper Server es una herramienta que facilita la tarea de buscar, procesar y reunir datos que se encuentran en sitios web.
+ 
+ ![arquitectura](https://github.com/MarianoSaez/final/blob/main/img/Esquema%20gral..png)
