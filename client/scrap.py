@@ -15,6 +15,9 @@ from socket import (
 # from ssl import (
 #     create_default_context,
 # )
+from json import (
+    dumps
+)
 
 
 def create_socket() -> socket:
@@ -35,6 +38,6 @@ if __name__ == "__main__":
         "classes": CLASSES,
         "styles": STYLES,
     }
-    s.send(bytes(str(data), 'utf-8'))
+    s.send(bytes(dumps(data), 'utf-8'))
     s.close()
     exit(0)
