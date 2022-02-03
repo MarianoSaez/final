@@ -1,4 +1,11 @@
+from datetime import datetime
+from os import (
+    getpid
+)
 import re
+from time import (
+    time
+)
 from requests import (
     get
 )
@@ -28,9 +35,9 @@ def search_data(soup: BeautifulSoup, tag: str, classes: str = None,
         **other,
     }
     if classes is not None:
-        attrs["classes"] = re.compile(classes + r".*")
+        attrs["class"] = re.compile(classes + r".*")
     if styles is not None:
-        attrs["styles"] = re.compile(styles + r".*")
+        attrs["style"] = re.compile(styles + r".*")
 
     result = soup.find_all(tag, attrs=attrs)
     return result
@@ -43,7 +50,10 @@ def extract_text(result: list, separator: str = " ") -> list[str]:
     por mas que este sea un elemento compuesto por multiples tags con
     diferentes textos dentro.
     """
-    return [spider(tag, separator) for tag in result]
+    return [
+        re.sub(separator + r"{2,}",
+               separator,
+               spider(tag, separator).strip(separator)) for tag in result]
 
 
 def spider(obj, separator: str):
@@ -63,9 +73,43 @@ def spider(obj, separator: str):
     return aux
 
 
+def scrap(args: tuple) -> list[str]:
+    """
+    Wrapper del procedimiento de scrapping. Utilizado para ser pasado como
+    identificador de funcion a procesos que deban realizar las tres acciones
+    principales, mediante una unica llamada a funcion. Retorna lista de strings
+    """
+    start = time()
+
+    url = args[0]
+    tag, classes, styles, other = args[1:5]
+    separator = args[-1]
+
+    soup = get_parsed_website(url)
+    result = search_data(soup, tag, classes, styles, other)
+    string_list = extract_text(result, separator)
+
+    final = {
+        "pid": getpid(),
+        "date": str(datetime.now()),
+        "time_elapsed": time() - start,
+        "url": url,
+        "search_params": {
+            "tag": tag,
+            "classes": classes,
+            "styles": styles,
+        },
+        "record_number": len(string_list),
+        "data": string_list,
+    }
+
+    return final
+
+
+# Para pruebas unicamente
 if __name__ == "__main__":
     b = get_parsed_website("https://openbenchmarking.org/test/pts/aircrack-ng")
-    r = search_data(b, "div", ["div_table_row"], [" color: #f1052d;"])
+    r = search_data(b, "div", "div_table_row", " color: #f1052d;")
     s = extract_text(r, ":")
     for i in s:
         print(i)
