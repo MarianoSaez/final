@@ -14,10 +14,10 @@ _parser.add_argument("-t", "--tags", type=str,
                      nargs="+",
                      help="HTML tags to look for")
 _parser.add_argument("-c", "--htmlclass", type=str,
-                     nargs="+", default=[None],
+                     nargs="+", default=None,
                      help="HTML classes to look for")
 _parser.add_argument("-s", "--style", type=str,
-                     nargs="+", default=[None],
+                     nargs="+", default=None,
                      help="inline styles to look for")
 _parser.add_argument("-a", "--address", type=str,
                      help="IP address of the server",

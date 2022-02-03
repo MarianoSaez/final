@@ -94,11 +94,6 @@ class Scrapper(Process):
             browsers.shutdown(wait=True)
 
         # Devolver al cliente el resultado de la busqueda
-        # for i in result:
-        #     print("".center(80, "="))
-        #     for j in i:
-        #         print(f"{j} : {i[j]}")
-
         data = dumps(list(result), indent=4)
         raw = data.encode('utf-8')
         self.conn.send(raw)

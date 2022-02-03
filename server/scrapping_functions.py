@@ -35,9 +35,9 @@ def search_data(soup: BeautifulSoup, tag: str, classes: str = None,
         **other,
     }
     if classes is not None:
-        attrs["class"] = re.compile(classes + r".*")
+        attrs["class"] = re.compile(" ".join(classes) + r".*")
     if styles is not None:
-        attrs["style"] = re.compile(styles + r".*")
+        attrs["style"] = re.compile(" ".join(styles) + r".*")
 
     result = soup.find_all(tag, attrs=attrs)
     return result

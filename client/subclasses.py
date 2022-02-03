@@ -7,6 +7,11 @@ from socket import (
     AF_INET,
     SOCK_STREAM,
 )
+"""
+TODO:
+    - Implementacion de SSL para la conexion cliente-servidor
+    - Agregado de funcionalidades adicionales, como guardado en formato csv
+"""
 
 ENCODING = "utf-8"
 
@@ -17,9 +22,10 @@ class WebScrapperClient():
     cliente del WebScrapperServer.
     """
 
-    def __init__(self, server_addr: tuple, dataonly: bool = False,
+    def __init__(self, server_addr: tuple, data: dict, dataonly: bool = False,
                  outputfile: str = "scrap.json") -> None:
         self.server_addr = server_addr
+        self.data = data
         self.dataonly = dataonly
         self.outputfile = outputfile
 
@@ -61,7 +67,7 @@ class WebScrapperClient():
         """
         self.sock.close()
 
-    def main(self, data: dict, dataonly: bool, outputfile: str) -> None:
+    def main(self) -> None:
         """
         Funcion principal del cliente
         """
