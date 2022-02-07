@@ -1,4 +1,6 @@
-from datetime import datetime
+from datetime import (
+    datetime
+)
 from os import (
     getpid
 )
@@ -7,21 +9,40 @@ from time import (
     time
 )
 from requests import (
-    get
+    get,
+    exceptions,
 )
 from bs4 import (
     BeautifulSoup
 )
+from custom_errors import (
+    PageNotFound,
+    CouldNotScrape,
+    EmptyScrapeList,
+)
 
 
-def get_parsed_website(url: str) -> BeautifulSoup:
+def get_parsed_website(url: str) -> tuple[BeautifulSoup, int, str]:
     """
     Obtiene y parsea el sitio web pasado por parametos de la
     funcion. Retorna objeto BeautifulSoup.
     """
-    response = get(url)
-    soup = BeautifulSoup(response.content, features="html.parser")
-    return soup
+    try:
+        response = get(url)
+        code = response.status_code
+        response.raise_for_status()     # Levantar request.exceptions.HTTPError
+        err = None
+
+    except exceptions.HTTPError:
+        if code < 500:
+            err: Exception = PageNotFound(url)
+        else:
+            err: Exception = CouldNotScrape(url, code)
+        raise err
+
+    finally:
+        soup = BeautifulSoup(response.content, features="html.parser")
+        return soup, code, str(err)
 
 
 def search_data(soup: BeautifulSoup, tag: str, classes: str = None,
@@ -43,17 +64,24 @@ def search_data(soup: BeautifulSoup, tag: str, classes: str = None,
     return result
 
 
-def extract_text(result: list, separator: str = " ") -> list[str]:
+def extract_text(result: list, separator: str = " ") -> tuple[list[str], str]:
     """
     Dado un set de elementos que cumplen los parametros de busqueda, se
     extraera el texto contenido dentro de cada elemento del conjunto,
     por mas que este sea un elemento compuesto por multiples tags con
     diferentes textos dentro.
     """
-    return [
+    err = None
+    text_list = [
         re.sub(separator + r"{2,}",
                separator,
                spider(tag, separator).strip(separator)) for tag in result]
+
+    if len(text_list) == 0:
+        err = EmptyScrapeList()
+        raise err
+
+    return text_list, str(err)
 
 
 def spider(obj, separator: str):
@@ -85,15 +113,20 @@ def scrap(args: tuple) -> list[str]:
     tag, classes, styles, other = args[1:5]
     separator = args[-1]
 
-    soup = get_parsed_website(url)
+    soup, code, web_err = get_parsed_website(url)
     result = search_data(soup, tag, classes, styles, other)
-    string_list = extract_text(result, separator)
+    string_list, list_err = extract_text(result, separator)
 
     final = {
         "pid": getpid(),
         "date": str(datetime.now()),
         "time_elapsed": time() - start,
         "url": url,
+        "code": code,
+        "errors": [
+            web_err,
+            list_err,
+        ],
         "search_params": {
             "tag": tag,
             "classes": classes,

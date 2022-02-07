@@ -34,7 +34,13 @@ class WebScrapperServer():
         print("Inicializando servidor")
 
         def handler(signum, frame):
+            """
+            Funcion manejadora de interrupciones. Disparada por SIGINT.
+            Espera y libera los recursos utilizados por el servidor.
+            """
             print("\nCerrando servidor")
+            for proc in proc_list:
+                proc.join()
             s.close()
             exit(0)
 
@@ -44,11 +50,14 @@ class WebScrapperServer():
         s.bind(("0.0.0.0", self.port))
         s.listen()
 
+        proc_list: list[Scrapper] = list()
+
         while True:
             conn, addr = s.accept()     # Bloquea hasta recibir otra conexion
             print(f"Nueva conexion desde {addr[0]}:{addr[1]}")
 
             scrapper = Scrapper(conn)
+            proc_list.append(scrapper)  # En caso de tener que esperarlos
             scrapper.start()
 
 

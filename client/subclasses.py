@@ -7,6 +7,8 @@ from socket import (
     AF_INET,
     SOCK_STREAM,
 )
+
+from custom_errors import ServerNotFound
 """
 TODO:
     - Implementacion de SSL para la conexion cliente-servidor
@@ -34,11 +36,14 @@ class WebScrapperClient():
         Crear socket TCP
         """
         self.sock = socket(AF_INET, SOCK_STREAM)
-        # TODO: Secure Socket Layer implementation
-        # ctxt = create_default_context()
-        # ctxt.load_default_certs()
-        # sec_sock = ctxt.wrap_socket(sock)
-        self.sock.connect(self.server_addr)
+        try:
+            # TODO: Secure Socket Layer implementation
+            # ctxt = create_default_context()
+            # ctxt.load_default_certs()
+            # sec_sock = ctxt.wrap_socket(sock)
+            self.sock.connect(self.server_addr)
+        except ConnectionRefusedError:
+            raise ServerNotFound(*self.server_addr)
 
     def prepare_data_to_send(self) -> None:
         """
