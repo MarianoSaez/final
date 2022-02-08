@@ -73,7 +73,7 @@ def extract_text(result: list, separator: str = " ") -> tuple[list[str], str]:
     """
     err = None
     text_list = [
-        re.sub(separator + r"{2,}",
+        re.sub("\\" + separator + r"{2,}",
                separator,
                spider(tag, separator).strip(separator)) for tag in result]
 
