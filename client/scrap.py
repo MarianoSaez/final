@@ -22,7 +22,13 @@ if __name__ == "__main__":
         "styles": STYLES,
         "separator": SEPARATOR,
     }
-    c = WebScrapperClient((SERVER_IP, SERVER_PORT), DATA, DATAONLY, OUTPUTFILE)
+    c = WebScrapperClient(
+        (SERVER_IP, SERVER_PORT),
+        DATA,
+        SEPARATOR,
+        DATAONLY,
+        OUTPUTFILE
+    )
     c.main()
 
     exit(0)

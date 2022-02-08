@@ -7,8 +7,12 @@ from socket import (
     AF_INET,
     SOCK_STREAM,
 )
-
-from custom_errors import ServerNotFound
+from custom_errors import (
+    ServerNotFound,
+)
+from csv import (
+    writer,
+)
 """
 TODO:
     - Implementacion de SSL para la conexion cliente-servidor
@@ -24,10 +28,12 @@ class WebScrapperClient():
     cliente del WebScrapperServer.
     """
 
-    def __init__(self, server_addr: tuple, data: dict, dataonly: bool = False,
+    def __init__(self, server_addr: tuple, data: dict, sep: str,
+                 dataonly: bool = False,
                  outputfile: str = "scrap.json") -> None:
         self.server_addr = server_addr
         self.data = data
+        self.sep = sep
         self.dataonly = dataonly
         self.outputfile = outputfile
 
@@ -55,11 +61,15 @@ class WebScrapperClient():
         """
         Almacenar el resultado de la busqueda
         """
+        parsed: list[dict] = loads(self.raw_response)
+
         if self.dataonly:
-            parsed: list[dict] = loads(self.raw_response)
             self.saved = dumps([field["data"] for field in parsed], indent=4)
         else:
             self.saved = self.raw_response
+
+        file = CSV(self.outputfile.strip(".json") + ".csv", parsed, self.sep)
+        file.save()
 
         with open(self.outputfile, "w") as out:
             out.write(self.saved)
@@ -91,3 +101,43 @@ class WebScrapperClient():
 
         # Cerrar cliente
         self.close_client()
+
+
+class File:
+    """
+    Clase abtracta. Los diferentes formatos de archivos implementan
+    sus metodos de la manera apropiada segun correponda.
+    """
+    def __init__(self, name: str, data: list[dict], sep: str) -> None:
+        self.name = name
+        self.sep = sep
+        self.data = data
+
+    @property
+    def data(self) -> list:
+        return self.__data
+
+    @data.setter
+    def data(self, value: list[dict]) -> None:
+        s: list[list[str]] = [field["data"] for field in value]
+        aux = list()
+        for i in s:
+            for j in i:
+                aux.append(j.split(self.sep))
+        self.__data: list[str] = aux
+
+    def save(self) -> None:
+        raise NotImplementedError
+
+
+class CSV(File):
+    def __init__(self, name: str, data: list[dict], sep: str) -> None:
+        super().__init__(name, data, sep)
+
+    def save(self) -> None:
+        """
+        Guardar en formato csv la informacion recibida
+        """
+        with open(self.name, "w+", newline="") as f:
+            w = writer(f)
+            w.writerows(self.data)
