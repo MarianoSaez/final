@@ -2,6 +2,7 @@
 ignored/
 .vscode/
 scrap.json
+*.csv
 myRequest/
 
 # Byte-compiled / optimized / DLL files
