@@ -86,7 +86,7 @@ class Scrapper(Process):
         Realizar busqueda y procesamiento de las paginas
         """
         self.recv_conn()
-        args = list()
+        args: list[tuple] = list()
         for i in range(len(self.urls)):
             arg_tuple = (
                 self.urls[i],
@@ -99,11 +99,15 @@ class Scrapper(Process):
             args.append(arg_tuple)
 
         with ProcessPoolExecutor() as browsers:
-            result = browsers.map(scrap, args)
-            browsers.shutdown(wait=True)
+            # result = browsers.map(scrap, args, chunksize=10)
+            result = [browsers.submit(scrap, arg) for arg in args]
+
+        print(result, end="\n\n\n")
+        # for i in result:
+        #     print(i)
 
         # Devolver al cliente el resultado de la busqueda
-        data = dumps(list(result), indent=4)
+        data = dumps([i.result() for i in result], indent=4)
         raw = data.encode('utf-8')
         self.conn.send(raw)
 

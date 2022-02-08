@@ -123,8 +123,8 @@ class File:
         aux = list()
         for i in s:
             for j in i:
-                aux.append(j.split(self.sep))
-        self.__data: list[str] = aux
+                print(j)
+        self.__data: list[str] = ["soon!"]
 
     def save(self) -> None:
         raise NotImplementedError
