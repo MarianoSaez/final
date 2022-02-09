@@ -30,7 +30,7 @@ _parser.add_argument("--separator", type=str,
                      default=" ")
 _parser.add_argument("-o", "--outputfile", type=str,
                      help="file destinated to save the program output",
-                     default="scrap.json")
+                     default="scrap")
 _parser.add_argument("--dataonly",
                      help="Saves only the data field",
                      default=False, action="store_true")

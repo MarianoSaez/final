@@ -100,14 +100,17 @@ class Scrapper(Process):
 
         with ProcessPoolExecutor() as browsers:
             # result = browsers.map(scrap, args, chunksize=10)
-            result = [browsers.submit(scrap, arg) for arg in args]
+            future_result = [browsers.submit(scrap, arg) for arg in args]
 
-        print(result, end="\n\n\n")
-        # for i in result:
-        #     print(i)
+        # Pasar de objeto futuro a lista
+        result = [r.result() for r in future_result]
+
+        # Reconvertir el campo data a un objeto de python
+        for i in result:
+            i["data"] = loads(i["data"])
 
         # Devolver al cliente el resultado de la busqueda
-        data = dumps([i.result() for i in result], indent=4)
+        data = dumps(result, indent=4)
         raw = data.encode('utf-8')
         self.conn.send(raw)
 

@@ -1,6 +1,7 @@
 from datetime import (
     datetime
 )
+from json import dumps
 from os import (
     getpid
 )
@@ -130,7 +131,7 @@ def scrap(args: tuple) -> dict:
             "styles": styles,
         },
         "record_number": len(string_list),
-        "data": string_list,
+        "data": dumps(string_list),
     }
 
     return final

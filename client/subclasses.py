@@ -68,8 +68,11 @@ class WebScrapperClient():
         else:
             self.saved = self.raw_response
 
-        file = CSV(self.outputfile.strip(".json") + ".csv", parsed, self.sep)
-        file.save()
+        csv_file = CSV(self.outputfile, parsed, self.sep)
+        csv_file.save()
+
+        json_file = JSON(self.outputfile, parsed, self.sep)
+        json_file.save()
 
         with open(self.outputfile, "w") as out:
             out.write(self.saved)
@@ -120,11 +123,10 @@ class File:
     @data.setter
     def data(self, value: list[dict]) -> None:
         s: list[list[str]] = [field["data"] for field in value]
-        aux = list()
+        self.__data = list()
         for i in s:
             for j in i:
-                print(j)
-        self.__data: list[str] = ["soon!"]
+                self.__data.append(j)
 
     def save(self) -> None:
         raise NotImplementedError
@@ -138,6 +140,19 @@ class CSV(File):
         """
         Guardar en formato csv la informacion recibida
         """
-        with open(self.name, "w+", newline="") as f:
+        with open(self.name + ".csv", "w+", newline="") as f:
             w = writer(f)
             w.writerows(self.data)
+
+
+class JSON(File):
+    def __init__(self, name: str, data: list[dict], sep: str) -> None:
+        super().__init__(name, data, sep)
+
+    def save(self) -> None:
+        """
+        Guardar en formato JSON
+        """
+        with open(self.name + ".json", "w+") as f:
+            j: str = dumps(self.data, indent=4)
+            f.write(j)
