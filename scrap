@@ -1,8 +1,8 @@
 [
     {
-        "pid": 12656,
-        "date": "2022-02-08 22:35:02.053158",
-        "time_elapsed": 1.3370192050933838,
+        "pid": 9765,
+        "date": "2022-02-09 23:03:11.159452",
+        "time_elapsed": 1.1014747619628906,
         "url": "https://openbenchmarking.org/test/pts/aircrack-ng",
         "code": 200,
         "errors": [
@@ -591,9 +591,9 @@
         ]
     },
     {
-        "pid": 12659,
-        "date": "2022-02-08 22:35:02.194923",
-        "time_elapsed": 1.4786391258239746,
+        "pid": 9758,
+        "date": "2022-02-09 23:03:11.142765",
+        "time_elapsed": 1.0847270488739014,
         "url": "https://openbenchmarking.org/test/pts/compress-7zip-1.8.0",
         "code": 200,
         "errors": [
@@ -868,9 +868,9 @@
         ]
     },
     {
-        "pid": 12660,
-        "date": "2022-02-08 22:35:02.266335",
-        "time_elapsed": 1.5500414371490479,
+        "pid": 9759,
+        "date": "2022-02-09 23:03:11.084640",
+        "time_elapsed": 1.0251550674438477,
         "url": "https://openbenchmarking.org/test/pts/aom-av1-3.2.0",
         "code": 200,
         "errors": [

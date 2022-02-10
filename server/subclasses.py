@@ -1,12 +1,9 @@
 from multiprocessing import (
     Process,
 )
-from concurrent.futures import (
-    ProcessPoolExecutor,
-)
-from scrapping_functions import (
-    scrap,
-)
+# from concurrent.futures import (
+#     ProcessPoolExecutor,
+# )
 from socket import (
     socket,
     AF_INET,
@@ -19,6 +16,9 @@ from json import (
 from signal import (
     signal,
     SIGINT
+)
+from task_queue.scrap_tasks import (
+    scrap,
 )
 
 
@@ -99,14 +99,18 @@ class Scrapper(Process):
             args.append(arg_tuple)
 
         """
-        A ser reemplzado por una Cola de Tareas en Celery
-        """
+        Reemplzado por Cola de Tareas en Celery
+
         with ProcessPoolExecutor() as browsers:
             # result = browsers.map(scrap, args, chunksize=10)
             future_result = [browsers.submit(scrap, arg) for arg in args]
+        """
+
+        # Lanzar a la cola de tareas
+        future_result = [scrap.delay(arg) for arg in args]
 
         # Pasar de objeto futuro a lista
-        result = [r.result() for r in future_result]
+        result = [r.get() for r in future_result]
 
         # Reconvertir el campo data a un objeto de python
         for i in result:
