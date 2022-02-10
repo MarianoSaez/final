@@ -63,20 +63,18 @@ class WebScrapperClient():
         """
         parsed: list[dict] = loads(self.raw_response)
 
-        if self.dataonly:
-            self.saved = dumps([field["data"] for field in parsed], indent=4)
+        # Respecto al json. Guardar o no info. de control.
+        if not self.dataonly:
+            with open(self.outputfile, "w") as out:
+                out.write(self.raw_response)
+                out.close()
         else:
-            self.saved = self.raw_response
+            json_file = JSON(self.outputfile, parsed, self.sep)
+            json_file.save()
 
+        # Respecto al csv. Guardar.
         csv_file = CSV(self.outputfile, parsed, self.sep)
         csv_file.save()
-
-        json_file = JSON(self.outputfile, parsed, self.sep)
-        json_file.save()
-
-        with open(self.outputfile, "w") as out:
-            out.write(self.saved)
-            out.close()
 
     def close_client(self) -> None:
         """

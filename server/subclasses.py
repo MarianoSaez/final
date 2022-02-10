@@ -98,6 +98,9 @@ class Scrapper(Process):
             )
             args.append(arg_tuple)
 
+        """
+        A ser reemplzado por una Cola de Tareas en Celery
+        """
         with ProcessPoolExecutor() as browsers:
             # result = browsers.map(scrap, args, chunksize=10)
             future_result = [browsers.submit(scrap, arg) for arg in args]
