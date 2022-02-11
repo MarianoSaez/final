@@ -4,6 +4,7 @@ ignored/
 scrap.json
 *.csv
 myRequest/
+scrap
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -1,0 +1,28 @@
+version: "3"
+services:
+
+  redis:
+    image: redis:latest
+
+  task_queue:
+    build:
+      context: .
+      dockerfile: task_queue-dockerfile
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379
+      - CELERY_BACKEND_URL=redis://redis:6379
+    depends_on:
+      - redis
+
+  server:
+    build:
+      context: .
+      dockerfile: server-dockerfile
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379
+      - CELERY_BACKEND_URL=redis://redis:6379
+    depends_on:
+      - redis
+      - task_queue
+    ports:
+      - "9000:9000" # End-point de entrada a la Default Docker Network
