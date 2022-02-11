@@ -1,7 +1,7 @@
-from python:3.10
-env PYTHONBUFFERED 1
-run mkdir /task_queue
-add requirements.txt /task_queue/
-run pip install --upgrade pip && pip install -r /task_queue/requirements.txt
-add task_queue/ /task_queue/
-cmd celery -A task_queue worker -l INFO
+FROM python:3.10
+ENV PYTHONBUFFERED 1
+RUN mkdir /task_queue
+ADD requirements.txt /task_queue/
+RUN pip install --upgrade pip && pip install -r /task_queue/requirements.txt
+ADD task_queue/ /task_queue/
+CMD celery -A task_queue worker -l INFO
