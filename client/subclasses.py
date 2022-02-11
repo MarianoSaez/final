@@ -6,6 +6,7 @@ from socket import (
     socket,
     AF_INET,
     SOCK_STREAM,
+    timeout as Timeout,
 )
 from custom_errors import (
     ServerNotFound,
@@ -16,10 +17,10 @@ from csv import (
 """
 TODO:
     - Implementacion de SSL para la conexion cliente-servidor
-    - Agregado de funcionalidades adicionales, como guardado en formato csv
 """
 
 ENCODING = "utf-8"
+BUFFSIZE = 4096
 
 
 class WebScrapperClient():
@@ -29,6 +30,7 @@ class WebScrapperClient():
     """
 
     def __init__(self, server_addr: tuple, data: dict, sep: str,
+                 timeout: int,
                  dataonly: bool = False,
                  outputfile: str = "scrap.json") -> None:
         self.server_addr = server_addr
@@ -36,6 +38,7 @@ class WebScrapperClient():
         self.sep = sep
         self.dataonly = dataonly
         self.outputfile = outputfile
+        self.timeout = timeout
 
     def create_socket(self) -> None:
         """
@@ -83,6 +86,19 @@ class WebScrapperClient():
         """
         self.sock.close()
 
+    def recv_data(self) -> None:
+        """
+        Procedimiento para recibir informacion desde el servidor.
+        """
+        self.sock.settimeout(self.timeout)     # Fijar timeout
+        data = self.sock.recv(BUFFSIZE)
+        while len(data) > 0:
+            try:
+                data += self.sock.recv(BUFFSIZE)
+            except Timeout:       # Cachear excepcion de Timeout
+                break
+        self.raw_response = data.decode()
+
     def main(self) -> None:
         """
         Funcion principal del cliente
@@ -95,7 +111,7 @@ class WebScrapperClient():
         self.sock.send(self.sendable)
 
         # Bloquearse hasta obtener respuesta del server
-        self.raw_response = self.sock.recv(32768).decode()
+        self.recv_data()
 
         # Guardar en archivo la busqueda
         self.save_scrapped()

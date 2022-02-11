@@ -34,6 +34,9 @@ _parser.add_argument("-o", "--outputfile", type=str,
 _parser.add_argument("--dataonly",
                      help="Saves only the data field",
                      default=False, action="store_true")
+_parser.add_argument("--timeout",
+                     help="Set max timeout for response waiting",
+                     type=int, default=5)
 
 _args = _parser.parse_args()
 
@@ -47,3 +50,4 @@ SERVER_PORT: int = _args.port
 SEPARATOR: str = _args.separator
 OUTPUTFILE: str = _args.outputfile
 DATAONLY: bool = _args.dataonly
+TIMEOUT: int = _args.timeout
