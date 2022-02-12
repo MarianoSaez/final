@@ -117,9 +117,7 @@ class Scrapper(Process):
             i["data"] = loads(i["data"])
 
         # Devolver al cliente el resultado de la busqueda
-        data = dumps(result, indent=4)
-        raw = data.encode('utf-8')
-        self.conn.send(raw)
+        self.send_data(result)
 
     def recv_conn(self) -> None:
         """
@@ -135,6 +133,28 @@ class Scrapper(Process):
         self.styles = params["styles"]
         self.separator = params["separator"]
         # self.own_kwargs = params["kwargs"]
+
+    def send_data(self, result: list) -> None:
+        """
+        Realizar el envio de la informacion obtenida del proceso de scrapping.
+        """
+        BUFFSIZE = 4096
+
+        data = dumps(result, indent=4)
+        raw = data.encode('utf-8')
+
+        # Linea complicada - Evita iterar mas de una vez
+        [self.conn.send(raw[i:i+BUFFSIZE])
+            for i in range(0, len(raw), BUFFSIZE)]
+
+        """
+        Equivalente:
+
+        for i in range(0, len(raw), BUFFSIZE):
+            aux = raw[i:i+BUFFSIZE]
+            self.conn.send(aux)
+
+        """
 
 
 if __name__ == "__main__":

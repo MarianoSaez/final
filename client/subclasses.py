@@ -6,7 +6,6 @@ from socket import (
     socket,
     AF_INET,
     SOCK_STREAM,
-    timeout as Timeout,
 )
 from custom_errors import (
     ServerNotFound,
@@ -111,7 +110,7 @@ class WebScrapperClient():
         while len(data) > 0:
             try:
                 data += self.sock.recv(BUFFSIZE)
-            except Timeout:       # Cachear excepcion de Timeout
+            except Exception:       # Cachear excepcion de Timeout
                 break
         self.raw_response = data.decode()
 
