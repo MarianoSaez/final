@@ -8,8 +8,11 @@ import argparse as ap
 _parser = ap.ArgumentParser()
 
 _parser.add_argument("url", type=str,
-                     nargs="+",
+                     nargs="*",
                      help="destintation to scrap")
+_parser.add_argument("-f", "--file", type=str,
+                     help="Url file to be read",
+                     default=None)
 _parser.add_argument("-t", "--tags", type=str,
                      nargs="+",
                      help="HTML tags to look for")
@@ -40,8 +43,8 @@ _parser.add_argument("--timeout",
 
 _args = _parser.parse_args()
 
-
 URL: list = _args.url
+FILE: str = _args.file
 TAGS: list = _args.tags
 CLASSES: list = _args.htmlclass
 STYLES: list = _args.style

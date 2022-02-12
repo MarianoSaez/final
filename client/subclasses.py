@@ -30,7 +30,7 @@ class WebScrapperClient():
     """
 
     def __init__(self, server_addr: tuple, data: dict, sep: str,
-                 timeout: int,
+                 timeout: int, file: str,
                  dataonly: bool = False,
                  outputfile: str = "scrap.json") -> None:
         self.server_addr = server_addr
@@ -39,6 +39,22 @@ class WebScrapperClient():
         self.dataonly = dataonly
         self.outputfile = outputfile
         self.timeout = timeout
+        self.file = file
+
+    @property
+    def file(self) -> str:
+        return self.__file
+
+    @file.setter
+    def file(self, value: str) -> None:
+        # Setear las urls desde el archivo
+        if value:
+            with open(value, "r") as f:
+                urls: list = f.read().splitlines()
+                self.data["urls"] = urls
+
+        # Finalmente asignar valor al atributo
+        self.__file = value
 
     def create_socket(self) -> None:
         """
@@ -108,6 +124,7 @@ class WebScrapperClient():
 
         # Preparar datos para el envio del request
         self.prepare_data_to_send()
+        print(self.data["urls"])
         self.sock.send(self.sendable)
 
         # Bloquearse hasta obtener respuesta del server

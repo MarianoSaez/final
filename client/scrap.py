@@ -10,6 +10,7 @@ from CLI_managment import (
     SERVER_IP,
     SERVER_PORT,
     TIMEOUT,
+    FILE,
 )
 from subclasses import WebScrapperClient
 
@@ -28,6 +29,7 @@ if __name__ == "__main__":
         DATA,
         SEPARATOR,
         TIMEOUT,
+        FILE,
         DATAONLY,
         OUTPUTFILE
     )
