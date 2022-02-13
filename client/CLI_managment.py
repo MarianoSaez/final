@@ -40,6 +40,9 @@ _parser.add_argument("--dataonly",
 _parser.add_argument("--timeout",
                      help="Set max timeout for response waiting",
                      type=int, default=5)
+_parser.add_argument("--alltogether",
+                     help="Every result set will be saved in the same file",
+                     default=False, action="store_true")
 
 _args = _parser.parse_args()
 
@@ -54,3 +57,4 @@ SEPARATOR: str = _args.separator
 OUTPUTFILE: str = _args.outputfile
 DATAONLY: bool = _args.dataonly
 TIMEOUT: int = _args.timeout
+ALLTOGETHER: bool = _args.alltogether

@@ -11,6 +11,7 @@ from CLI_managment import (
     SERVER_PORT,
     TIMEOUT,
     FILE,
+    ALLTOGETHER,
 )
 from subclasses import WebScrapperClient
 
@@ -31,6 +32,7 @@ if __name__ == "__main__":
         TIMEOUT,
         FILE,
         DATAONLY,
+        ALLTOGETHER,
         OUTPUTFILE
     )
     c.main()

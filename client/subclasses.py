@@ -1,3 +1,4 @@
+from concurrent.futures import ThreadPoolExecutor
 from json import (
     dumps,
     loads,
@@ -31,7 +32,8 @@ class WebScrapperClient():
     def __init__(self, server_addr: tuple, data: dict, sep: str,
                  timeout: int, file: str,
                  dataonly: bool = False,
-                 outputfile: str = "scrap.json") -> None:
+                 alltogether: bool = False,
+                 outputfile: str = "scrap") -> None:
         self.server_addr = server_addr
         self.data = data
         self.sep = sep
@@ -39,6 +41,7 @@ class WebScrapperClient():
         self.outputfile = outputfile
         self.timeout = timeout
         self.file = file
+        self.alltogether = alltogether
 
     @property
     def file(self) -> str:
@@ -81,18 +84,26 @@ class WebScrapperClient():
         """
         parsed: list[dict] = loads(self.raw_response)
 
-        # Respecto al json. Guardar o no info. de control.
-        if not self.dataonly:
-            with open(self.outputfile, "w") as out:
-                out.write(self.raw_response)
-                out.close()
-        else:
-            json_file = JSON(self.outputfile, parsed, self.sep)
-            json_file.save()
+        with ThreadPoolExecutor() as pool:  # Dado que se trata de una I/O
 
-        # Respecto al csv. Guardar.
-        csv_file = CSV(self.outputfile, parsed, self.sep)
-        csv_file.save()
+            if self.alltogether:
+                args = (self.outputfile, parsed, self.sep)
+                files = [
+                    JSON(*args),
+                    CSV(*args),
+                ]
+                [pool.submit(lambda x: x.save(), file) for file in files]
+
+            else:
+                c = 1
+                for result in parsed:
+                    args = (self.outputfile + f"{c}", [result, ], self.sep)
+                    files = [
+                        JSON(*args),
+                        CSV(*args),
+                    ]
+                    [pool.submit(lambda x: x.save(), file) for file in files]
+                    c += 1
 
     def close_client(self) -> None:
         """
@@ -123,7 +134,6 @@ class WebScrapperClient():
 
         # Preparar datos para el envio del request
         self.prepare_data_to_send()
-        print(self.data["urls"])
         self.sock.send(self.sendable)
 
         # Bloquearse hasta obtener respuesta del server
