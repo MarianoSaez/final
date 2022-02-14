@@ -1,6 +1,7 @@
 from multiprocessing import (
     Process,
 )
+import os
 # from concurrent.futures import (
 #     ProcessPoolExecutor,
 # )
@@ -19,6 +20,9 @@ from signal import (
 )
 from task_queue.scrap_tasks import (
     scrap,
+)
+from pymongo import (
+    MongoClient,
 )
 
 
@@ -119,6 +123,9 @@ class Scrapper(Process):
         # Devolver al cliente el resultado de la busqueda
         self.send_data(result)
 
+        # Por ultimo. Guardar log en la DB.
+        self.log_scrap(result)
+
     def recv_conn(self) -> None:
         """
         Setup del proceso con la informacion necesaria, recibida via socket
@@ -155,6 +162,16 @@ class Scrapper(Process):
             self.conn.send(aux)
 
         """
+
+    def log_scrap(self, result: list[dict]) -> None:
+        client = MongoClient(os.environ.get("MONGODB_URL"))
+        db = client["scrappinghistorydb"]
+        history = db["history"]
+
+        for r in result:
+            del r["data"]   # Remover datos de la busqueda para ahorrar espacio
+
+        history.insert_many(result)     # Insertar "cabeceras" en la DB
 
 
 if __name__ == "__main__":

@@ -6,6 +6,7 @@ scrap.json
 myRequest/
 scrap
 scrap-file.txt
+server/logs/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

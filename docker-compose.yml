@@ -4,6 +4,13 @@ services:
   redis:
     image: redis:latest
 
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017" # End-point de interaccion con la DB
+    volumes:
+      - "./server/logs:/data/db"
+
   task_queue:
     build:
       context: .
@@ -21,8 +28,10 @@ services:
     environment:
       - CELERY_BROKER_URL=redis://redis:6379
       - CELERY_BACKEND_URL=redis://redis:6379
+      - MONGODB_URL=mongodb://mongo:27017/
     depends_on:
       - redis
       - task_queue
+      - mongo
     ports:
-      - "9000:9000" # End-point de entrada a la Default Docker Network
+      - "9000:9000" # End-point de interaccion con el Server
