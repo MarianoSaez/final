@@ -1,7 +1,7 @@
 # Custom ignores
 ignored/
 .vscode/
-scrap.json
+*.json
 *.csv
 myRequest/
 scrap
