@@ -22,3 +22,22 @@ Simple Web Scrapper Server es una herramienta que facilita la tarea de buscar, p
  scrap https://somewebsite.com/path/to/data -t div -c div_table_cell -s font-weigth: bold
  ```
  Los parametros -t, -c, -s son utilizados para ubicar los elementos de interes, por lo cual, mientras mas especificos sean, mas precisa resultara la busqueda y por lo tanto mejores seran los resultados.
+
+ ### Lista completa de parametros
+
+    positional arguments:
+    url                                           Destintation to scrap
+
+    options:
+    -h, --help                                    Show this help message and exit
+    -f, --file FILE                               Url file to be read
+    -t, --tags TAGS [TAGS ...]                    HTML tags to look for
+    -c, --htmlclass HTMLCLASS [HTMLCLASS ...]     HTML classes to look for
+    -s, --style STYLE [STYLE ...]                 Inline styles to look for
+    -a, --address ADDRESS                         IP address of the server
+    -p, --port PORT                               Server port
+    --separator SEPARATOR                         Separate text by some char (,|.|:|;|...)
+    -o, --outputfile OUTPUTFILE                   File destinated to save the program output
+    --dataonly                                    Saves only the data field
+    --timeout TIMEOUT                             Set max timeout for response waiting
+    --alltogether                                 Every result set will be saved in the same file
